@@ -33,8 +33,12 @@ class MultiUserEditingController extends Controller implements Flushable
         //get the cache data
         $this->editingCache = Injector::inst()->get(CacheInterface::class . '.multiuserediting');
 
+        $editing = $this->editingCache->get('editing');
+        if ($editing == null) {
+            $editing = "";
+        }
 
-        $usersEditing = unserialize($this->editingCache->get('editing'));
+        $usersEditing = unserialize($editing);
 
         //create a new simple PHP object to store user editing data
         if (!$usersEditing) {
@@ -75,7 +79,7 @@ class MultiUserEditingController extends Controller implements Flushable
 
         $dataArray = array();
         $dataArray['lastEdited'] = date("Y-m-d H:i:s"); //when this was last updated
-        $dataArray['abbreviatedName'] = $this->user->FirstName . ' ' . substr($this->user->Surname, 0, 1);
+        $dataArray['abbreviatedName'] = $this->user->FirstName . ' ' . substr($this->user->Surname ? $this->user->Surname : '', 0, 1);
         $dataArray['fullName'] = $this->user->FirstName . ' ' . $this->user->Surname;
         $dataArray['firstName'] = $this->user->FirstName;
         $dataArray['email'] = $this->user->Email;
